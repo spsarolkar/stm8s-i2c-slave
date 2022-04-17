@@ -96,6 +96,26 @@ static inline void delay_ms(uint16_t ms) {
 }
 /* Public functions ----------------------------------------------------------*/
 
+// void i2c_init() {
+
+// 	  /* Disable I2C to configure TRISER */
+//   I2C->CR1 &= (uint8_t)(~I2C_CR1_PE);
+
+//   /* Clear CCRH & CCRL */
+// //   I2C->CCRH &= (uint8_t)(~(I2C_CCRH_FS | I2C_CCRH_DUTY | I2C_CCRH_CCR));
+// //   I2C->CCRL &= (uint8_t)(~I2C_CCRL_CCR);
+  
+// 	I2C->FREQR &= (uint8_t)(~I2C_FREQR_FREQ);
+// 	printf("\nI2C_FREQR %d",1 << 1);
+//     I2C->FREQR = (1 << 1);
+//     I2C->CCRL = 0x0A; // 100kHz
+// 	I2C->TRISER=0x03; // I2C_FREQR=2Mhz, 1/2Mhz= 500ns , standard mode scl rise time = 1000ns. 1000ns/500ns=2, 2+1=3
+// 	printf("\nI2C_OARH %d\n",(1<<I2C_OARH_ADDMODE));
+//     I2C->OARH = (1 << 6); // 7-bit addressing
+// 	I2C->OARL = (1 << SLAVE_ADDRESS); //slave address
+//     I2C->CR1 = (1 << I2C_CR1_PE);
+// }
+
 /**
   * @brief  Main program.
   * @param  None
@@ -126,23 +146,41 @@ void main(void)
   printf("I2C_DeInit \n");
   I2C_DeInit();
   /* Initialize I2C peripheral */
+  /* Disable I2C to configure TRISER */
+  //I2C->CR1 &= (uint8_t)(~I2C_CR1_PE);
 
+//i2c_init();
 #ifdef I2C_slave_7Bits_Address
-  I2C_Init(100000, SLAVE_ADDRESS, I2C_DUTYCYCLE_2, I2C_ACK_CURR, I2C_ADDMODE_7BIT, 16);           
+  I2C_Init(100000, SLAVE_ADDRESS, I2C_DUTYCYCLE_2, I2C_ACK_CURR, I2C_ADDMODE_7BIT, 2);           
 #else
   I2C_Init(100000, SLAVE_ADDRESS, I2C_DUTYCYCLE_2, I2C_ACK_CURR,I2C_ADDMODE_10BIT, 16);
 #endif
+printf("I2C->CR1 %d\n",I2C->CR1);
 printf("I2C_ITConfig \n");
   /* Enable Error Interrupt*/
-  I2C_ITConfig((I2C_IT_TypeDef)(I2C_IT_ERR | I2C_IT_EVT | I2C_IT_BUF), ENABLE);
-printf("enableInterrupts \n");
+ // I2C_ITConfig((I2C_IT_TypeDef)(I2C_IT_ERR | I2C_IT_EVT | I2C_IT_BUF), ENABLE);
+ // I2C_ITConfig((I2C_IT_TypeDef)(I2C_IT_ERR | I2C_IT_BUF), ENABLE);
+//printf("enableInterrupts \n");
   /* Enable general interrupts */
-  enableInterrupts();
+ // enableInterrupts();
 
   /*Main Loop */
   while (1)
   {
     /* infinite loop */
+	printf("\n%d",I2C->SR1);
+
+	if(I2C->SR1 & I2C_SR1_ADDR)
+	{
+		printf("Address matched\n");
+		//(void)I2C->SR1;
+		(void)I2C->SR3;
+delay_ms(500);
+		printf("I2C->DR %d\n",I2C->DR);
+		printf("I2C->SR3 %d\n",I2C->SR3);
+	}
+
+	delay_ms(2000);
   }
 }
 

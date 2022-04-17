@@ -36,11 +36,11 @@
 
 /* Define Slave Address  ---------------------------------------------------*/
 #ifdef I2C_slave_7Bits_Address
-#define SLAVE_ADDRESS 0x30
+#define SLAVE_ADDRESS 0x33
 #else
 #define SLAVE_ADDRESS 0x330
 #endif
-
+//void i2c_init();
 #endif /* __MAIN_H*/
 
 

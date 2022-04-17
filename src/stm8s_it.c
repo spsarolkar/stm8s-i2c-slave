@@ -391,7 +391,7 @@ INTERRUPT_HANDLER(TIM1_CAP_COM_IRQHandler, 12)
 INTERRUPT_HANDLER(I2C_IRQHandler, 19)
 {
 
-	printf("I2C_IRQHandler \n");
+	//printf("I2C_IRQHandler \n");
   /* Read SR2 register to get I2C error */
   if ((I2C->SR2) != 0)
   {
